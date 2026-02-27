@@ -1,0 +1,581 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Weekly Update - Feb 27, 2026 | JEM Yiddish ASR</title>
+<style>
+  :root {
+    --bg: #0a0c14;
+    --surface: #121521;
+    --surface2: #1a1e2e;
+    --surface3: #222840;
+    --border: #2a2f48;
+    --border-hover: #3d4466;
+    --text: #e4e6f0;
+    --text-dim: #7d82a0;
+    --text-faint: #555a78;
+    --accent: #7c6aef;
+    --accent-dim: rgba(124,106,239,.12);
+    --green: #34d399;
+    --green-dim: rgba(52,211,153,.1);
+    --amber: #fbbf24;
+    --amber-dim: rgba(251,191,36,.1);
+    --pink: #f472b6;
+    --pink-dim: rgba(244,114,182,.1);
+    --blue: #60a5fa;
+    --blue-dim: rgba(96,165,250,.1);
+    --cyan: #22d3ee;
+    --cyan-dim: rgba(34,211,238,.1);
+    --red: #f87171;
+    --red-dim: rgba(248,113,113,.1);
+  }
+  *{margin:0;padding:0;box-sizing:border-box;}
+  body{background:var(--bg);color:var(--text);font-family:'Segoe UI',system-ui,-apple-system,sans-serif;line-height:1.7;min-height:100vh;}
+  a{color:var(--accent);text-decoration:none;}
+  a:hover{text-decoration:underline;}
+
+  /* Header */
+  .header{text-align:center;padding:4rem 2rem 2.5rem;position:relative;overflow:hidden;}
+  .header::before{content:'';position:absolute;top:-50%;left:-50%;width:200%;height:200%;background:radial-gradient(ellipse at 50% 20%,rgba(124,106,239,.08) 0%,transparent 60%);pointer-events:none;}
+  .back-link{display:inline-flex;align-items:center;gap:.4rem;font-size:.82rem;color:var(--text-dim);margin-bottom:1.5rem;transition:color .2s;}
+  .back-link:hover{color:var(--text);text-decoration:none;}
+  .date-badge{display:inline-flex;align-items:center;gap:.5rem;background:var(--accent-dim);border:1px solid rgba(124,106,239,.25);border-radius:20px;padding:.35rem 1rem;font-size:.78rem;color:var(--accent);font-weight:600;margin-bottom:1rem;}
+  .header h1{font-size:2.4rem;font-weight:800;letter-spacing:-.02em;background:linear-gradient(135deg,#fff 0%,var(--accent) 50%,var(--cyan) 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+  .header p{color:var(--text-dim);max-width:650px;margin:.8rem auto 0;font-size:1.05rem;}
+
+  /* Container */
+  .container{max-width:900px;margin:0 auto;padding:0 1.5rem 5rem;}
+
+  /* Section */
+  .section{margin-bottom:3rem;}
+  .section-header{display:flex;align-items:center;gap:.7rem;margin-bottom:1.2rem;padding-bottom:.6rem;border-bottom:1px solid var(--border);}
+  .section-icon{width:32px;height:32px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:1rem;flex-shrink:0;}
+  .section-header h2{font-size:1.2rem;font-weight:700;}
+
+  /* Cards */
+  .system-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:1rem;}
+  .system-card{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:1.4rem;position:relative;overflow:hidden;}
+  .system-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;border-radius:14px 14px 0 0;}
+  .system-card.cleaner::before{background:var(--green);}
+  .system-card.mapper::before{background:var(--amber);}
+  .system-card.aligner::before{background:var(--pink);}
+  .system-card h3{font-size:1rem;font-weight:700;margin-bottom:.15rem;display:flex;align-items:center;gap:.5rem;}
+  .system-card h3 .dot{width:8px;height:8px;border-radius:50%;display:inline-block;}
+  .system-card .subtitle{font-size:.78rem;color:var(--text-faint);margin-bottom:.8rem;}
+  .system-card ul{list-style:none;padding:0;}
+  .system-card li{font-size:.85rem;color:var(--text-dim);padding:.25rem 0;padding-left:1.1rem;position:relative;}
+  .system-card li::before{content:'';position:absolute;left:0;top:.65rem;width:6px;height:6px;border-radius:50%;}
+  .system-card.cleaner li::before{background:var(--green);}
+  .system-card.mapper li::before{background:var(--amber);}
+  .system-card.aligner li::before{background:var(--pink);}
+
+  /* Progress bar */
+  .progress-row{display:flex;align-items:center;gap:.8rem;margin-top:.8rem;padding-top:.6rem;border-top:1px solid var(--border);}
+  .progress-label{font-size:.72rem;color:var(--text-faint);font-weight:600;white-space:nowrap;}
+  .progress-bar{flex:1;height:6px;background:var(--surface2);border-radius:3px;overflow:hidden;}
+  .progress-fill{height:100%;border-radius:3px;transition:width .5s ease;}
+  .progress-pct{font-size:.72rem;color:var(--text-dim);font-weight:700;min-width:2.5rem;text-align:right;}
+
+  /* Built this week */
+  .built-grid{display:grid;gap:.8rem;}
+  .built-item{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:1.1rem 1.3rem;display:flex;gap:1rem;align-items:flex-start;}
+  .built-item .built-icon{width:28px;height:28px;border-radius:7px;display:flex;align-items:center;justify-content:center;font-size:.85rem;flex-shrink:0;margin-top:.1rem;}
+  .built-item h4{font-size:.92rem;font-weight:700;margin-bottom:.15rem;}
+  .built-item p{font-size:.82rem;color:var(--text-dim);line-height:1.5;}
+  .built-tag{display:inline-block;padding:.1rem .45rem;border-radius:4px;font-size:.65rem;font-weight:700;margin-left:.4rem;vertical-align:middle;}
+
+  /* Journey */
+  .journey-steps{position:relative;padding-left:2rem;}
+  .journey-steps::before{content:'';position:absolute;left:.55rem;top:.5rem;bottom:.5rem;width:2px;background:linear-gradient(to bottom,var(--green),var(--amber),var(--pink),var(--accent),var(--cyan));}
+  .journey-step{position:relative;margin-bottom:1.5rem;}
+  .journey-step:last-child{margin-bottom:0;}
+  .journey-step .step-dot{position:absolute;left:-1.7rem;top:.35rem;width:14px;height:14px;border-radius:50%;border:2px solid var(--bg);}
+  .journey-step h4{font-size:.95rem;font-weight:700;margin-bottom:.2rem;}
+  .journey-step p{font-size:.84rem;color:var(--text-dim);line-height:1.55;}
+  .step-status{display:inline-block;font-size:.68rem;font-weight:700;padding:.1rem .5rem;border-radius:4px;margin-left:.5rem;vertical-align:middle;}
+
+  /* Confidence section */
+  .confidence-box{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:1.6rem;position:relative;overflow:hidden;}
+  .confidence-box::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,var(--green),var(--amber),var(--red));border-radius:14px 14px 0 0;}
+  .confidence-box h3{font-size:1.05rem;font-weight:700;margin-bottom:.8rem;}
+  .confidence-box p{font-size:.88rem;color:var(--text-dim);line-height:1.6;margin-bottom:.8rem;}
+
+  .conf-demo{background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:1.2rem;margin:1.2rem 0;}
+  .conf-demo-label{font-size:.72rem;color:var(--text-faint);font-weight:600;text-transform:uppercase;letter-spacing:.08em;margin-bottom:.7rem;}
+  .word-chips{display:flex;flex-wrap:wrap;gap:.5rem;direction:rtl;}
+  .word-chip{display:inline-flex;flex-direction:column;align-items:center;padding:.4rem .7rem;border-radius:8px;border:1px solid var(--border);min-width:50px;}
+  .word-chip .word{font-size:.95rem;font-weight:600;font-family:'Segoe UI',system-ui,sans-serif;}
+  .word-chip .score{font-size:.68rem;font-weight:700;margin-top:.15rem;}
+  .word-chip.high{background:rgba(52,211,153,.08);border-color:rgba(52,211,153,.25);}
+  .word-chip.high .score{color:var(--green);}
+  .word-chip.mid{background:rgba(251,191,36,.08);border-color:rgba(251,191,36,.25);}
+  .word-chip.mid .score{color:var(--amber);}
+  .word-chip.low{background:rgba(248,113,113,.08);border-color:rgba(248,113,113,.25);}
+  .word-chip.low .score{color:var(--red);}
+
+  .color-legend{display:flex;gap:1.5rem;flex-wrap:wrap;margin:.8rem 0;}
+  .legend-item{display:flex;align-items:center;gap:.4rem;font-size:.78rem;color:var(--text-dim);}
+  .legend-dot{width:10px;height:10px;border-radius:3px;}
+
+  .conf-timeline{display:flex;align-items:center;gap:.6rem;margin-top:1rem;padding-top:.8rem;border-top:1px solid var(--border);}
+  .conf-timeline-item{display:flex;align-items:center;gap:.35rem;}
+  .conf-timeline-icon{font-size:.9rem;}
+  .conf-timeline-text{font-size:.78rem;color:var(--text-dim);}
+  .conf-arrow{color:var(--text-faint);font-size:.85rem;}
+
+  /* What to expect */
+  .expect-grid{display:grid;gap:.8rem;}
+  .expect-item{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:1.1rem 1.3rem;display:flex;gap:.8rem;align-items:flex-start;}
+  .expect-item .expect-num{width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:.78rem;font-weight:800;flex-shrink:0;background:var(--accent-dim);color:var(--accent);border:1px solid rgba(124,106,239,.2);}
+  .expect-item h4{font-size:.92rem;font-weight:700;margin-bottom:.15rem;}
+  .expect-item p{font-size:.82rem;color:var(--text-dim);line-height:1.5;}
+
+  /* Summary stats */
+  .stats-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:.8rem;margin-bottom:2rem;}
+  .stat-card{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:1rem;text-align:center;}
+  .stat-value{font-size:1.6rem;font-weight:800;background:linear-gradient(135deg,var(--accent),var(--cyan));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+  .stat-label{font-size:.72rem;color:var(--text-faint);font-weight:600;text-transform:uppercase;letter-spacing:.06em;margin-top:.1rem;}
+
+  /* TL;DR */
+  .tldr{background:linear-gradient(135deg,rgba(124,106,239,.06),rgba(34,211,238,.06));border:1px solid rgba(124,106,239,.2);border-radius:14px;padding:1.6rem;margin-bottom:2.5rem;}
+  .tldr h3{font-size:1rem;font-weight:700;margin-bottom:.5rem;color:var(--accent);}
+  .tldr p{font-size:.9rem;color:var(--text-dim);line-height:1.6;}
+
+  /* Footer */
+  footer{text-align:center;padding:2rem;color:var(--text-faint);font-size:.78rem;border-top:1px solid var(--border);}
+  footer a{color:var(--accent);}
+
+  @media(max-width:600px){
+    .header h1{font-size:1.6rem;}
+    .header{padding:3rem 1.2rem 2rem;}
+    .container{padding:0 1rem 3rem;}
+    .system-grid{grid-template-columns:1fr;}
+    .stats-row{grid-template-columns:repeat(2,1fr);}
+    .word-chips{gap:.35rem;}
+    .conf-timeline{flex-direction:column;align-items:flex-start;}
+  }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <a href="https://abe1018776.github.io/jem-asr-hub/" class="back-link">&#8592; Back to Project Hub</a><br>
+  <div class="date-badge">Week of February 27, 2026</div>
+  <h1>Weekly Project Update</h1>
+  <p>Status of all three systems, what was built this week, user journey overview, confidence scoring update, and what's coming next.</p>
+</div>
+
+<div class="container">
+
+  <!-- TL;DR -->
+  <div class="tldr">
+    <h3>TL;DR</h3>
+    <p>All three systems &mdash; Cleaner, Mapper, and Aligner &mdash; are individually operational and deployed. This week focused on comprehensive documentation, integration architecture planning, and the merge strategy for consolidating into one unified platform. The confidence scoring feature (showing per-word reliability instead of timecodes) is already supported in the backend and is actively being surfaced in the UI. <strong>Coming next week: we already have a detailed plan in place to incorporate everything into one merged, unified application.</strong></p>
+  </div>
+
+  <!-- Live Tools - Try Them Now -->
+  <div class="section" style="margin-bottom:2.5rem;">
+    <div class="section-header">
+      <div class="section-icon" style="background:var(--green-dim);color:var(--green);">&#127760;</div>
+      <h2>Try It Now &mdash; Live Tools</h2>
+    </div>
+    <div class="system-grid">
+      <a href="https://kolyid.dynamiq.dev/dashboard" target="_blank" class="live-card" style="border-left:3px solid var(--green);text-decoration:none;">
+        <div class="url"><span class="live-dot"></span> kolyid.dynamiq.dev</div>
+        <h4>KolYid Dashboard</h4>
+        <p>The main benchmark application &mdash; manage audio samples, run ASR transcriptions, clean transcripts, measure accuracy with WER/CER, and view the public leaderboard. This is the central hub where all data comes together.</p>
+      </a>
+      <a href="https://mapping.kohnai.ai/" target="_blank" class="live-card" style="border-left:3px solid var(--amber);text-decoration:none;">
+        <div class="url"><span class="live-dot"></span> mapping.kohnai.ai</div>
+        <h4>Audio-Text Mapping Tool</h4>
+        <p>Browse and match 4,669 audio files to 1,065 transcripts. See algorithmic match suggestions with confidence scores, search by keyword, filter by Hebrew calendar date, and export verified pairs as CSV.</p>
+      </a>
+      <a href="https://align.kohnai.ai/" target="_blank" class="live-card" style="border-left:3px solid var(--pink);text-decoration:none;">
+        <div class="url"><span class="live-dot"></span> align.kohnai.ai</div>
+        <h4>Audio Alignment Tool</h4>
+        <p>Upload audio + paste Yiddish text to get word-level timestamps. Karaoke-style playback with color-coded confidence scoring. Click any word to jump to that point in the audio. This is where the confidence feature is being enhanced.</p>
+      </a>
+    </div>
+  </div>
+
+  <!-- Quick Stats -->
+  <div class="stats-row">
+    <div class="stat-card">
+      <div class="stat-value">3</div>
+      <div class="stat-label">Live Systems</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-value">150+</div>
+      <div class="stat-label">Commits Total</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-value">1,809</div>
+      <div class="stat-label">Audio Matched</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-value">~38%</div>
+      <div class="stat-label">Unified Platform</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-value">9</div>
+      <div class="stat-label">Doc Pages</div>
+    </div>
+  </div>
+
+  <!-- ====== SECTION: What Each System Has ====== -->
+  <div class="section">
+    <div class="section-header">
+      <div class="section-icon" style="background:var(--accent-dim);color:var(--accent);">&#9881;</div>
+      <h2>Current State of Each System</h2>
+    </div>
+
+    <div class="system-grid">
+
+      <!-- Cleaner -->
+      <div class="system-card cleaner">
+        <h3><span class="dot" style="background:var(--green);"></span> Yiddish Cleaner (KolYid)</h3>
+        <div class="subtitle">Laravel 12 + Vue 3 + Inertia.js &bull; Main Benchmark App</div>
+        <ul>
+          <li>Full audio sample management with import pipeline</li>
+          <li>8-stage text cleaning pipeline (rule-based presets + LLM)</li>
+          <li>5 ASR provider integrations (YiddishLabs, OpenAI, Whisper, Gemini, Groq)</li>
+          <li>WER/CER accuracy scoring with Hebrew normalization</li>
+          <li>Public benchmark leaderboard (4 views: aggregate, per-model, comparison, Gold Standard)</li>
+          <li>5 gold standard files (expanding to 7)</li>
+          <li>Word-level review interface with critical error flagging</li>
+          <li>Real-time WebSocket updates via Laravel Reverb</li>
+          <li>Clean rate scoring system (0-100 with 9 penalty rules)</li>
+        </ul>
+        <div class="progress-row">
+          <span class="progress-label">Overall</span>
+          <div class="progress-bar"><div class="progress-fill" style="width:85%;background:var(--green);"></div></div>
+          <span class="progress-pct">85%</span>
+        </div>
+      </div>
+
+      <!-- Mapper -->
+      <div class="system-card mapper">
+        <h3><span class="dot" style="background:var(--amber);"></span> Audio-Text Mapper</h3>
+        <div class="subtitle">Vanilla JS &bull; Cloudflare Pages &bull; mapping.kohnai.ai</div>
+        <ul>
+          <li>4,669 audio files indexed from Google Drive</li>
+          <li>1,065 transcripts cataloged and searchable</li>
+          <li>1,809 matched pairs verified</li>
+          <li>Algorithmic matching with confidence scoring (0&ndash;1.0)</li>
+          <li>Date + keyword hybrid analysis (Hebrew calendar support)</li>
+          <li>4-tab UI: 50-Hour Selection, All Matched, Unmatched Audio, Unmatched Transcripts</li>
+          <li>Full-text search and CSV export</li>
+          <li>2,860 unmatched audio files still available for matching</li>
+        </ul>
+        <div class="progress-row">
+          <span class="progress-label">Overall</span>
+          <div class="progress-bar"><div class="progress-fill" style="width:90%;background:var(--amber);"></div></div>
+          <span class="progress-pct">90%</span>
+        </div>
+      </div>
+
+      <!-- Aligner -->
+      <div class="system-card aligner">
+        <h3><span class="dot" style="background:var(--pink);"></span> Audio Alignment</h3>
+        <div class="subtitle">Python/Flask + RunPod GPU &bull; align.kohnai.ai</div>
+        <ul>
+          <li>Word-level forced alignment with yi-whisper-large-v3-turbo</li>
+          <li>Confusion-aware iterative algorithm (backtrack + retry on degraded zones)</li>
+          <li>Per-word confidence scores computed (w.probability 0.0&ndash;1.0)</li>
+          <li>Karaoke-style playback with click-to-seek</li>
+          <li>Color-coded word chips (green/yellow/red by confidence)</li>
+          <li>Cloudflare Pages frontend with RunPod GPU backend</li>
+          <li>Dual output format (hierarchical segments + flat word list)</li>
+          <li>Document cleaning with diff viewer</li>
+        </ul>
+        <div class="progress-row">
+          <span class="progress-label">Overall</span>
+          <div class="progress-bar"><div class="progress-fill" style="width:60%;background:var(--pink);"></div></div>
+          <span class="progress-pct">60%</span>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ====== SECTION: Built This Week ====== -->
+  <div class="section">
+    <div class="section-header">
+      <div class="section-icon" style="background:var(--green-dim);color:var(--green);">&#9889;</div>
+      <h2>What Was Built This Week</h2>
+    </div>
+
+    <div class="built-grid">
+
+      <div class="built-item">
+        <div class="built-icon" style="background:var(--accent-dim);color:var(--accent);">&#128220;</div>
+        <div>
+          <h4>Complete Project Documentation Suite <span class="built-tag" style="background:var(--green-dim);color:var(--green);">Done</span></h4>
+          <p>Created 9 comprehensive documentation pages covering every aspect of the system: architecture for each system, unified architecture view, integration plan, user journey, dev journey, technical merge plan, repo changes summary, and confidence UI plan. All deployed to GitHub Pages.</p>
+        </div>
+      </div>
+
+      <div class="built-item">
+        <div class="built-icon" style="background:var(--cyan-dim);color:var(--cyan);">&#127959;</div>
+        <div>
+          <h4>Integration Architecture Designed <span class="built-tag" style="background:var(--green-dim);color:var(--green);">Done</span></h4>
+          <p>Designed the full consolidation blueprint for merging three repos into yiddish-cleaner. Defined data flows, API boundaries, database schema changes, Docker sidecar strategy for Python ML components, and a 4-phase implementation plan (10&ndash;14 weeks).</p>
+        </div>
+      </div>
+
+      <div class="built-item">
+        <div class="built-icon" style="background:var(--amber-dim);color:var(--amber);">&#128736;</div>
+        <div>
+          <h4>Technical Merge Strategy Finalized <span class="built-tag" style="background:var(--green-dim);color:var(--green);">Done</span></h4>
+          <p>Completed the tactical merge plan: copy-based migration (not git subtree), server-side database replacing localStorage, RunPod serverless over local GPU, Vue 3 reconstruction of mapping UI. 9-phase implementation checklist ready.</p>
+        </div>
+      </div>
+
+      <div class="built-item">
+        <div class="built-icon" style="background:var(--pink-dim);color:var(--pink);">&#127919;</div>
+        <div>
+          <h4>Confidence Score UI &mdash; In Progress <span class="built-tag" style="background:var(--amber-dim);color:var(--amber);">Active</span></h4>
+          <p>Investigated the full confidence data pipeline end-to-end. Confirmed that per-word confidence scores (w.probability) are already computed by the alignment engine and returned by the API. Currently implementing the UI change to display confidence scores instead of timecodes. See detailed update below.</p>
+        </div>
+      </div>
+
+      <div class="built-item">
+        <div class="built-icon" style="background:var(--blue-dim);color:var(--blue);">&#128279;</div>
+        <div>
+          <h4>Central Project Hub Launched <span class="built-tag" style="background:var(--green-dim);color:var(--green);">Done</span></h4>
+          <p>Created the JEM ASR Hub (<a href="https://abe1018776.github.io/jem-asr-hub/">jem-asr-hub</a>) as the single entry point for all project documentation, live tools, and source repositories. All links organized by category with consistent design language.</p>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ====== SECTION: Confidence Scoring Update ====== -->
+  <div class="section">
+    <div class="section-header">
+      <div class="section-icon" style="background:var(--amber-dim);color:var(--amber);">&#127919;</div>
+      <h2>Confidence Scoring &mdash; Addressing Your Feedback</h2>
+    </div>
+
+    <div class="confidence-box">
+      <h3>What You Asked For</h3>
+      <p><em>"Instead of seeing the timecode, can we see the actual confidence rating &mdash; the TC isn't so important if it synced anyway."</em></p>
+      <p>You also asked about the orange and red colors in the UI. Here's the full picture:</p>
+
+      <h3 style="margin-top:1.2rem;">What We Found</h3>
+      <p>The confidence data is <strong>already flowing through the entire pipeline</strong>. The alignment engine (based on ivrit-ai's breakable aligner, adapted for Yiddish) computes a <code>w.probability</code> score for every single word during alignment. This score (0.0&ndash;1.0) represents how confident the Whisper model is that a given word matches the audio at that position. The API already returns these scores in the JSON response.</p>
+      <p>The UI already uses these scores for color-coding the word chip borders (green, yellow, red), but currently displays the <strong>timecode</strong> (e.g., "3.45s") as the text below each word instead of the confidence number. That's the gap we're closing.</p>
+
+      <h3 style="margin-top:1.2rem;">What It Will Look Like</h3>
+
+      <div class="conf-demo">
+        <div class="conf-demo-label">Before &mdash; Timecodes shown (current)</div>
+        <div class="word-chips">
+          <div class="word-chip high"><span class="word">&#1489;&#1512;&#1488;&#1513;&#1497;&#1514;</span><span class="score" style="color:var(--text-faint);">0.42s</span></div>
+          <div class="word-chip high"><span class="word">&#1489;&#1512;&#1488;</span><span class="score" style="color:var(--text-faint);">1.18s</span></div>
+          <div class="word-chip mid"><span class="word">&#1488;&#1500;&#1511;&#1497;&#1501;</span><span class="score" style="color:var(--text-faint);">2.05s</span></div>
+          <div class="word-chip high"><span class="word">&#1488;&#1514;</span><span class="score" style="color:var(--text-faint);">3.21s</span></div>
+          <div class="word-chip low"><span class="word">&#1492;&#1513;&#1502;&#1497;&#1501;</span><span class="score" style="color:var(--text-faint);">3.87s</span></div>
+          <div class="word-chip high"><span class="word">&#1493;&#1488;&#1514;</span><span class="score" style="color:var(--text-faint);">4.52s</span></div>
+          <div class="word-chip mid"><span class="word">&#1492;&#1488;&#1512;&#1509;</span><span class="score" style="color:var(--text-faint);">5.10s</span></div>
+        </div>
+      </div>
+
+      <div class="conf-demo">
+        <div class="conf-demo-label">After &mdash; Confidence scores shown (coming)</div>
+        <div class="word-chips">
+          <div class="word-chip high"><span class="word">&#1489;&#1512;&#1488;&#1513;&#1497;&#1514;</span><span class="score">0.92</span></div>
+          <div class="word-chip high"><span class="word">&#1489;&#1512;&#1488;</span><span class="score">0.87</span></div>
+          <div class="word-chip mid"><span class="word">&#1488;&#1500;&#1511;&#1497;&#1501;</span><span class="score">0.45</span></div>
+          <div class="word-chip high"><span class="word">&#1488;&#1514;</span><span class="score">0.81</span></div>
+          <div class="word-chip low"><span class="word">&#1492;&#1513;&#1502;&#1497;&#1501;</span><span class="score">0.12</span></div>
+          <div class="word-chip high"><span class="word">&#1493;&#1488;&#1514;</span><span class="score">0.78</span></div>
+          <div class="word-chip mid"><span class="word">&#1492;&#1488;&#1512;&#1509;</span><span class="score">0.38</span></div>
+        </div>
+      </div>
+
+      <div class="color-legend">
+        <div class="legend-item"><div class="legend-dot" style="background:var(--green);"></div> Green (&ge; 0.5) &mdash; High confidence, well-aligned</div>
+        <div class="legend-item"><div class="legend-dot" style="background:var(--amber);"></div> Yellow/Orange (0.2&ndash;0.5) &mdash; Moderate, worth reviewing</div>
+        <div class="legend-item"><div class="legend-dot" style="background:var(--red);"></div> Red (&lt; 0.2) &mdash; Low confidence, likely misaligned</div>
+      </div>
+
+      <h3 style="margin-top:1.2rem;">Implementation Status</h3>
+      <p>This is a <strong>frontend-only change</strong> &mdash; no backend work needed. The alignment API already returns confidence scores for every word. The change involves replacing the timecode display in the word chip HTML from <code>ts.start.toFixed(2)s</code> to <code>ts.confidence</code>. The color-coded borders already work based on these scores.</p>
+
+      <div class="conf-timeline">
+        <div class="conf-timeline-item">
+          <span class="conf-timeline-icon" style="color:var(--green);">&#10003;</span>
+          <span class="conf-timeline-text">Backend computes scores</span>
+        </div>
+        <span class="conf-arrow">&#8594;</span>
+        <div class="conf-timeline-item">
+          <span class="conf-timeline-icon" style="color:var(--green);">&#10003;</span>
+          <span class="conf-timeline-text">API returns them</span>
+        </div>
+        <span class="conf-arrow">&#8594;</span>
+        <div class="conf-timeline-item">
+          <span class="conf-timeline-icon" style="color:var(--green);">&#10003;</span>
+          <span class="conf-timeline-text">Color-coding works</span>
+        </div>
+        <span class="conf-arrow">&#8594;</span>
+        <div class="conf-timeline-item">
+          <span class="conf-timeline-icon" style="color:var(--amber);">&#9998;</span>
+          <span class="conf-timeline-text">Display number (in progress)</span>
+        </div>
+      </div>
+
+      <h3 style="margin-top:1.2rem;">About Orange vs Red</h3>
+      <p>The orange/red you noticed comes from two different places:</p>
+      <ul style="list-style:none;padding:0;margin-top:.4rem;">
+        <li style="font-size:.85rem;color:var(--text-dim);padding:.3rem 0;padding-left:1.2rem;position:relative;"><span style="position:absolute;left:0;color:var(--red);">&#9632;</span> <strong>Red</strong> in the document cleaning UI = removed text (strikethrough). This is binary: removed vs kept, not a confidence level.</li>
+        <li style="font-size:.85rem;color:var(--text-dim);padding:.3rem 0;padding-left:1.2rem;position:relative;"><span style="position:absolute;left:0;color:var(--amber);">&#9632;</span> <strong>Orange/Amber</strong> in the alignment UI = moderate confidence word (0.2&ndash;0.5 probability). These words synced but the model isn't fully certain.</li>
+      </ul>
+      <p style="margin-top:.6rem;">With the updated UI, users will see the exact confidence number alongside the color, making it immediately clear which words to trust and which to review.</p>
+    </div>
+  </div>
+
+  <!-- ====== SECTION: User Journey ====== -->
+  <div class="section">
+    <div class="section-header">
+      <div class="section-icon" style="background:var(--cyan-dim);color:var(--cyan);">&#128694;</div>
+      <h2>End-to-End User Journey</h2>
+    </div>
+
+    <p style="font-size:.88rem;color:var(--text-dim);margin-bottom:1.5rem;">Here is the complete path from raw audio to benchmarked, production-ready ASR output. The first three phases are operational today; phases 4 and 5 are in active development.</p>
+
+    <div class="journey-steps">
+
+      <div class="journey-step">
+        <div class="step-dot" style="background:var(--green);"></div>
+        <h4>Phase 1: Map Audio to Transcripts <span class="step-status" style="background:var(--green-dim);color:var(--green);">Live</span></h4>
+        <p>Go to <a href="https://mapping.kohnai.ai">mapping.kohnai.ai</a>. Browse 4,669 audio files and 1,065 transcripts. The system automatically suggests matches using date + keyword analysis with confidence scores. Review suggestions, verify matches, and export the verified pairs as CSV. The curated 50-Hour selection tab has 423 pre-matched pairs ready for training.</p>
+      </div>
+
+      <div class="journey-step">
+        <div class="step-dot" style="background:var(--green);"></div>
+        <h4>Phase 2: Align Audio with Text <span class="step-status" style="background:var(--green-dim);color:var(--green);">Live</span></h4>
+        <p>Go to <a href="https://align.kohnai.ai">align.kohnai.ai</a>. Upload an audio file and paste the corresponding Yiddish text. The system generates word-level timestamps using the yi-whisper model on GPU. Review results with karaoke-style playback &mdash; click any word to hear it. Each word is color-coded by confidence (green/yellow/red). Export timestamps for downstream use.</p>
+      </div>
+
+      <div class="journey-step">
+        <div class="step-dot" style="background:var(--green);"></div>
+        <h4>Phase 3: Clean &amp; Prepare Transcripts <span class="step-status" style="background:var(--green-dim);color:var(--green);">Live</span></h4>
+        <p>In the Yiddish Cleaner app, raw transcripts pass through an 8-stage cleaning pipeline. Stage directions, brackets, editorial notes, and formatting are automatically stripped. Choose from rule-based presets (minimal, full, heavy) or LLM-powered cleaning via 5 different AI providers. Each cleaning gets a quality score (0&ndash;100) so you know how confident the removal decisions were.</p>
+      </div>
+
+      <div class="journey-step">
+        <div class="step-dot" style="background:var(--amber);"></div>
+        <h4>Phase 4: Benchmark ASR Accuracy <span class="step-status" style="background:var(--amber-dim);color:var(--amber);">Building</span></h4>
+        <p>Run transcriptions through multiple ASR models and measure accuracy against gold standard references using WER/CER metrics with Yiddish-specific Hebrew normalization. The public leaderboard ranks models across aggregate scores, per-file breakdowns, and side-by-side comparisons. Currently 5 gold standard files; expanding to 7.</p>
+      </div>
+
+      <div class="journey-step">
+        <div class="step-dot" style="background:var(--accent);"></div>
+        <h4>Phase 5: Review, Train &amp; Publish <span class="step-status" style="background:var(--accent-dim);color:var(--accent);">Planned</span></h4>
+        <p>The JEM review interface will combine karaoke playback with per-word confidence display and approve/reject controls. Reviewed data feeds into training pipelines with strict separation from benchmark audio. Fine-tuned models are tested against the benchmark and published when they meet quality thresholds.</p>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ====== SECTION: What to Expect ====== -->
+  <div class="section">
+    <div class="section-header">
+      <div class="section-icon" style="background:var(--pink-dim);color:var(--pink);">&#128640;</div>
+      <h2>What to Expect Next</h2>
+    </div>
+
+    <div class="expect-grid">
+
+      <div class="expect-item">
+        <div class="expect-num">1</div>
+        <div>
+          <h4>Confidence Scores in Alignment UI</h4>
+          <p>The alignment tool at align.kohnai.ai will display per-word confidence scores instead of timecodes. This is a frontend-only change &mdash; the data is already there. You'll see exactly how confident the system is about each word's alignment.</p>
+        </div>
+      </div>
+
+      <div class="expect-item">
+        <div class="expect-num">2</div>
+        <div>
+          <h4>JEM Review Interface</h4>
+          <p>A dedicated review page combining karaoke audio playback, confidence-colored word display, and approve/reject controls. This is the critical gap at ~5% completion &mdash; it's the priority build for bringing alignment results into the benchmark workflow.</p>
+        </div>
+      </div>
+
+      <div class="expect-item">
+        <div class="expect-num">3</div>
+        <div>
+          <h4>Repository Consolidation Begins</h4>
+          <p>Phase 1 of the merge plan: set up the Python alignment engine as a Docker sidecar within the yiddish-cleaner Laravel app. This eliminates the need for a separate alignment deployment and unifies the data pipeline.</p>
+        </div>
+      </div>
+
+      <div class="expect-item">
+        <div class="expect-num">4</div>
+        <div>
+          <h4>Mapping Data Migration</h4>
+          <p>Move the mapping tool's data from static JSON/localStorage into proper database tables within yiddish-cleaner. All 1,809 verified matches and the matching algorithm will become server-side and persistent.</p>
+        </div>
+      </div>
+
+      <div class="expect-item">
+        <div class="expect-num">5</div>
+        <div>
+          <h4>Pipeline Stage Tracking</h4>
+          <p>A 5-stage state machine (Ingest &rarr; Map &rarr; Align &rarr; Clean &rarr; Review) that tracks every audio file's progress through the system. This ensures benchmark audio never accidentally enters training data.</p>
+        </div>
+      </div>
+
+    </div>
+
+    <div class="tldr" style="margin-top:1.5rem;background:linear-gradient(135deg,rgba(52,211,153,.06),rgba(34,211,238,.06));border-color:rgba(52,211,153,.2);">
+      <h3 style="color:var(--green);">Merge Plan Is Ready</h3>
+      <p>We already have a comprehensive, phased plan to incorporate the Mapper, Aligner, and Cleaner into a single unified application under <a href="https://kolyid.dynamiq.dev/dashboard">kolyid.dynamiq.dev</a>. The detailed technical merge plan, integration architecture, and implementation checklist are all documented and ready to execute. Coming week we begin Phase 1: bringing the Python alignment engine into the Laravel app as a Docker sidecar, so all three tools operate from one codebase and one database.</p>
+    </div>
+  </div>
+
+  <!-- ====== Quick Reference Links ====== -->
+  <div class="section">
+    <div class="section-header">
+      <div class="section-icon" style="background:var(--blue-dim);color:var(--blue);">&#128279;</div>
+      <h2>Quick Reference</h2>
+    </div>
+
+    <div class="system-grid">
+      <div class="system-card" style="border-left:3px solid var(--accent);">
+        <h3 style="font-size:.9rem;">Live Tools</h3>
+        <ul style="list-style:none;padding:0;margin-top:.4rem;">
+          <li style="padding-left:0;font-size:.84rem;"><a href="https://mapping.kohnai.ai">mapping.kohnai.ai</a> &mdash; Audio-Text Mapper</li>
+          <li style="padding-left:0;font-size:.84rem;"><a href="https://align.kohnai.ai">align.kohnai.ai</a> &mdash; Audio Alignment</li>
+        </ul>
+      </div>
+      <div class="system-card" style="border-left:3px solid var(--cyan);">
+        <h3 style="font-size:.9rem;">Key Documentation</h3>
+        <ul style="list-style:none;padding:0;margin-top:.4rem;">
+          <li style="padding-left:0;font-size:.84rem;"><a href="https://abe1018776.github.io/yiddish-cleaner-docs/architecture-unified.html">Unified Architecture</a></li>
+          <li style="padding-left:0;font-size:.84rem;"><a href="https://abe1018776.github.io/yiddish-cleaner-docs/user-journey.html">Full User Journey</a></li>
+          <li style="padding-left:0;font-size:.84rem;"><a href="https://abe1018776.github.io/yiddish-cleaner-docs/confidence-ui-plan.html">Confidence UI Plan</a></li>
+        </ul>
+      </div>
+      <div class="system-card" style="border-left:3px solid var(--green);">
+        <h3 style="font-size:.9rem;">Source Repositories</h3>
+        <ul style="list-style:none;padding:0;margin-top:.4rem;">
+          <li style="padding-left:0;font-size:.84rem;"><a href="https://github.com/Shloimy15e/yiddish-cleaner">yiddish-cleaner</a></li>
+          <li style="padding-left:0;font-size:.84rem;"><a href="https://github.com/Abe1018776/yiddish-mapping">yiddish-mapping</a></li>
+          <li style="padding-left:0;font-size:.84rem;"><a href="https://github.com/Abe1018776/yiddish-audio-alignment">yiddish-audio-alignment</a></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<footer>
+  JEM Yiddish ASR &bull; Weekly Update Feb 27, 2026 &bull; <a href="https://abe1018776.github.io/jem-asr-hub/">Back to Hub</a>
+</footer>
+
+</body>
+</html>
