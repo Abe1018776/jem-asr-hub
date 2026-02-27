@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>JEM Yiddish ASR - Project Hub</title>
+<style>
+  :root {
+    --bg: #0a0c14;
+    --surface: #121521;
+    --surface2: #1a1e2e;
+    --surface3: #222840;
+    --border: #2a2f48;
+    --border-hover: #3d4466;
+    --text: #e4e6f0;
+    --text-dim: #7d82a0;
+    --text-faint: #555a78;
+    --accent: #7c6aef;
+    --accent-dim: rgba(124,106,239,.12);
+    --green: #34d399;
+    --green-dim: rgba(52,211,153,.1);
+    --amber: #fbbf24;
+    --amber-dim: rgba(251,191,36,.1);
+    --pink: #f472b6;
+    --pink-dim: rgba(244,114,182,.1);
+    --blue: #60a5fa;
+    --blue-dim: rgba(96,165,250,.1);
+    --cyan: #22d3ee;
+    --cyan-dim: rgba(34,211,238,.1);
+    --red: #f87171;
+  }
+  *{margin:0;padding:0;box-sizing:border-box;}
+  body{background:var(--bg);color:var(--text);font-family:'Segoe UI',system-ui,-apple-system,sans-serif;line-height:1.6;min-height:100vh;}
+  a{color:inherit;text-decoration:none;}
+
+  /* Hero */
+  .hero{text-align:center;padding:5rem 2rem 3rem;position:relative;overflow:hidden;}
+  .hero::before{content:'';position:absolute;top:-50%;left:-50%;width:200%;height:200%;background:radial-gradient(ellipse at 50% 20%,rgba(124,106,239,.08) 0%,transparent 60%);pointer-events:none;}
+  .hero-badge{display:inline-flex;align-items:center;gap:.5rem;background:var(--surface2);border:1px solid var(--border);border-radius:20px;padding:.3rem .9rem;font-size:.75rem;color:var(--text-dim);margin-bottom:1.2rem;}
+  .hero-badge .dot{width:6px;height:6px;border-radius:50%;background:var(--green);animation:pulse 2s infinite;}
+  @keyframes pulse{0%,100%{opacity:1;}50%{opacity:.4;}}
+  .hero h1{font-size:2.8rem;font-weight:800;letter-spacing:-.02em;background:linear-gradient(135deg,#fff 0%,var(--accent) 50%,var(--pink) 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+  .hero p{color:var(--text-dim);max-width:600px;margin:.8rem auto 0;font-size:1.05rem;}
+
+  /* Container */
+  .container{max-width:1000px;margin:0 auto;padding:0 1.5rem 5rem;}
+
+  /* Section label */
+  .section-label{display:flex;align-items:center;gap:.6rem;margin:3rem 0 1.2rem;}
+  .section-label .line{flex:1;height:1px;background:var(--border);}
+  .section-label span{font-size:.7rem;text-transform:uppercase;letter-spacing:.14em;color:var(--text-faint);font-weight:600;white-space:nowrap;}
+
+  /* Link cards */
+  .card-grid{display:grid;gap:1rem;}
+  .link-card{display:block;background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:1.5rem 1.6rem;transition:all .25s ease;position:relative;overflow:hidden;}
+  .link-card:hover{border-color:var(--border-hover);transform:translateY(-2px);box-shadow:0 8px 30px rgba(0,0,0,.3);}
+  .link-card::after{content:'';position:absolute;top:0;left:0;right:0;height:2px;border-radius:14px 14px 0 0;opacity:0;transition:opacity .25s;}
+  .link-card:hover::after{opacity:1;}
+
+  .link-card.purple::after{background:var(--accent);}
+  .link-card.green::after{background:var(--green);}
+  .link-card.amber::after{background:var(--amber);}
+  .link-card.pink::after{background:var(--pink);}
+  .link-card.blue::after{background:var(--blue);}
+  .link-card.cyan::after{background:var(--cyan);}
+
+  .card-top{display:flex;align-items:center;gap:.7rem;margin-bottom:.5rem;}
+  .card-icon{width:36px;height:36px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:1.1rem;flex-shrink:0;}
+  .purple .card-icon{background:var(--accent-dim);color:var(--accent);}
+  .green .card-icon{background:var(--green-dim);color:var(--green);}
+  .amber .card-icon{background:var(--amber-dim);color:var(--amber);}
+  .pink .card-icon{background:var(--pink-dim);color:var(--pink);}
+  .blue .card-icon{background:var(--blue-dim);color:var(--blue);}
+  .cyan .card-icon{background:var(--cyan-dim);color:var(--cyan);}
+
+  .card-title{font-size:1.05rem;font-weight:700;}
+  .card-desc{font-size:.88rem;color:var(--text-dim);line-height:1.55;}
+  .card-meta{display:flex;flex-wrap:wrap;gap:.5rem;margin-top:.7rem;}
+  .meta-tag{display:inline-flex;align-items:center;gap:.3rem;padding:.15rem .55rem;border-radius:5px;font-size:.7rem;font-weight:600;background:var(--surface2);color:var(--text-faint);border:1px solid var(--border);}
+  .card-arrow{position:absolute;right:1.4rem;top:50%;transform:translateY(-50%);color:var(--text-faint);font-size:1.2rem;transition:all .25s;}
+  .link-card:hover .card-arrow{color:var(--text);transform:translateY(-50%) translateX(3px);}
+
+  /* Repo grid */
+  .repo-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:1rem;}
+  .repo-card{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:1.3rem 1.4rem;transition:all .25s;}
+  .repo-card:hover{border-color:var(--border-hover);transform:translateY(-1px);}
+  .repo-card h4{font-size:.95rem;font-weight:700;margin-bottom:.25rem;display:flex;align-items:center;gap:.4rem;}
+  .repo-card h4 .dot{width:8px;height:8px;border-radius:50%;display:inline-block;}
+  .repo-card p{font-size:.82rem;color:var(--text-dim);}
+  .repo-card .repo-links{display:flex;gap:.6rem;margin-top:.6rem;}
+  .repo-link{font-size:.72rem;font-weight:600;padding:.2rem .5rem;border-radius:5px;background:var(--surface2);color:var(--text-dim);border:1px solid var(--border);transition:all .2s;}
+  .repo-link:hover{color:var(--text);border-color:var(--border-hover);}
+
+  /* Live sites */
+  .live-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:1rem;}
+  .live-card{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:1.3rem 1.4rem;transition:all .25s;display:block;}
+  .live-card:hover{border-color:var(--border-hover);transform:translateY(-1px);}
+  .live-card .url{font-size:.8rem;color:var(--accent);font-weight:600;margin-bottom:.3rem;display:flex;align-items:center;gap:.4rem;}
+  .live-card .url .live-dot{width:7px;height:7px;border-radius:50%;background:var(--green);animation:pulse 2s infinite;}
+  .live-card h4{font-size:.95rem;font-weight:700;margin-bottom:.2rem;}
+  .live-card p{font-size:.82rem;color:var(--text-dim);}
+
+  /* Footer */
+  footer{text-align:center;padding:2rem;color:var(--text-faint);font-size:.78rem;border-top:1px solid var(--border);}
+  footer a{color:var(--accent);text-decoration:underline;text-underline-offset:2px;}
+
+  @media(max-width:600px){
+    .hero h1{font-size:1.8rem;}
+    .hero{padding:3rem 1.2rem 2rem;}
+    .container{padding:0 1rem 3rem;}
+    .link-card{padding:1.2rem;}
+  }
+</style>
+</head>
+<body>
+
+<div class="hero">
+  <div class="hero-badge"><span class="dot"></span> Project Hub</div>
+  <h1>JEM Yiddish ASR</h1>
+  <p>Central portal for all documentation, architecture references, live tools, and source code across the Yiddish audio processing system.</p>
+</div>
+
+<div class="container">
+
+  <!-- ===== DOCUMENTATION ===== -->
+  <div class="section-label">
+    <div class="line"></div>
+    <span>Documentation &amp; Architecture</span>
+    <div class="line"></div>
+  </div>
+
+  <div class="card-grid">
+
+    <a href="https://abe1018776.github.io/yiddish-cleaner-docs/repo-changes-summary.html" target="_blank" class="link-card purple">
+      <div class="card-top">
+        <div class="card-icon">&#128220;</div>
+        <div class="card-title">What's Been Built &amp; Changed</div>
+      </div>
+      <div class="card-desc">Plain-English summary of every change across all three repos. No jargon &mdash; explains what was built, when, and why, written for anyone to understand.</div>
+      <div class="card-meta">
+        <span class="meta-tag">All 3 repos</span>
+        <span class="meta-tag">150+ changes</span>
+        <span class="meta-tag">Layman-friendly</span>
+      </div>
+      <div class="card-arrow">&#8594;</div>
+    </a>
+
+    <a href="https://abe1018776.github.io/yiddish-cleaner-docs/" target="_blank" class="link-card green">
+      <div class="card-top">
+        <div class="card-icon">&#128737;</div>
+        <div class="card-title">Yiddish Cleaner Architecture</div>
+      </div>
+      <div class="card-desc">Deep dive into the KolYid benchmark application &mdash; Laravel backend, Vue frontend, ASR pipeline, cleaning system, word-level review, and the full data workflow.</div>
+      <div class="card-meta">
+        <span class="meta-tag">yiddish-cleaner</span>
+        <span class="meta-tag">Laravel + Vue</span>
+        <span class="meta-tag">System design</span>
+      </div>
+      <div class="card-arrow">&#8594;</div>
+    </a>
+
+    <a href="https://mapping.kohnai.ai/architecture?v=2" target="_blank" class="link-card amber">
+      <div class="card-top">
+        <div class="card-icon">&#128506;</div>
+        <div class="card-title">Audio-Text Mapping Architecture</div>
+      </div>
+      <div class="card-desc">Architecture of the mapping tool &mdash; how 4,669 audio files are matched to 1,065 transcripts with confidence scoring, Hebrew calendar support, and the matching algorithm.</div>
+      <div class="card-meta">
+        <span class="meta-tag">yiddish-mapping</span>
+        <span class="meta-tag">Vanilla JS</span>
+        <span class="meta-tag">Cloudflare Pages</span>
+      </div>
+      <div class="card-arrow">&#8594;</div>
+    </a>
+
+    <a href="https://htmlpreview.github.io/?https://github.com/Abe1018776/yiddish-audio-alignment/blob/feature/stable-ts-alignment/architecture.html" target="_blank" class="link-card pink">
+      <div class="card-top">
+        <div class="card-icon">&#127925;</div>
+        <div class="card-title">Audio Alignment Architecture</div>
+      </div>
+      <div class="card-desc">The confusion-aware alignment system &mdash; how audio is matched to text word-by-word using GPU inference, RunPod serverless backend, and the stable-ts algorithm adapted from ivrit-ai.</div>
+      <div class="card-meta">
+        <span class="meta-tag">yiddish-audio-alignment</span>
+        <span class="meta-tag">Python + Whisper</span>
+        <span class="meta-tag">RunPod GPU</span>
+      </div>
+      <div class="card-arrow">&#8594;</div>
+    </a>
+
+    <a href="https://htmlpreview.github.io/?https://github.com/Abe1018776/yiddish-cleaner-docs/blob/master/integration-architecture.html" target="_blank" class="link-card blue">
+      <div class="card-top">
+        <div class="card-icon">&#128268;</div>
+        <div class="card-title">Integration Architecture</div>
+      </div>
+      <div class="card-desc">How all three systems connect &mdash; data flows, API boundaries, shared models, and the end-to-end pipeline from raw audio to benchmarked ASR output.</div>
+      <div class="card-meta">
+        <span class="meta-tag">Cross-system</span>
+        <span class="meta-tag">Data flow</span>
+        <span class="meta-tag">API design</span>
+      </div>
+      <div class="card-arrow">&#8594;</div>
+    </a>
+
+    <a href="https://htmlpreview.github.io/?https://github.com/Abe1018776/yiddish-cleaner-docs/blob/master/technical-merge-plan.html#pr-description" target="_blank" class="link-card cyan">
+      <div class="card-top">
+        <div class="card-icon">&#128736;</div>
+        <div class="card-title">Technical Merge Plan</div>
+      </div>
+      <div class="card-desc">The roadmap for consolidating the three separate repos into a unified system. Covers migration strategy, database schema changes, API unification, and phased rollout.</div>
+      <div class="card-meta">
+        <span class="meta-tag">Roadmap</span>
+        <span class="meta-tag">Migration</span>
+        <span class="meta-tag">Consolidation</span>
+      </div>
+      <div class="card-arrow">&#8594;</div>
+    </a>
+
+  </div>
+
+  <!-- ===== LIVE SITES ===== -->
+  <div class="section-label">
+    <div class="line"></div>
+    <span>Live Sites</span>
+    <div class="line"></div>
+  </div>
+
+  <div class="live-grid">
+    <a href="https://mapping.kohnai.ai" target="_blank" class="live-card">
+      <div class="url"><span class="live-dot"></span> mapping.kohnai.ai</div>
+      <h4>Audio-Text Mapping Tool</h4>
+      <p>Match Yiddish audio recordings to their written transcripts. Browse, search, verify matches, and export CSVs.</p>
+    </a>
+    <a href="https://align.kohnai.ai" target="_blank" class="live-card">
+      <div class="url"><span class="live-dot"></span> align.kohnai.ai</div>
+      <h4>Audio Alignment Tool</h4>
+      <p>Upload audio + text to get word-level timestamps. Karaoke-style playback with confidence scoring.</p>
+    </a>
+  </div>
+
+  <!-- ===== SOURCE CODE ===== -->
+  <div class="section-label">
+    <div class="line"></div>
+    <span>Source Code Repositories</span>
+    <div class="line"></div>
+  </div>
+
+  <div class="repo-grid">
+    <div class="repo-card">
+      <h4><span class="dot" style="background:var(--green);"></span> yiddish-cleaner</h4>
+      <p>ASR benchmarking web app (KolYid). Laravel + Vue + Inertia. Manages audio samples, transcriptions, cleaning, word review, and accuracy scoring.</p>
+      <div class="repo-links">
+        <a href="https://github.com/Shloimy15e/yiddish-cleaner" target="_blank" class="repo-link">GitHub</a>
+        <a href="https://github.com/Shloimy15e/yiddish-cleaner/pulls" target="_blank" class="repo-link">Pull Requests</a>
+        <a href="https://github.com/Shloimy15e/yiddish-cleaner/issues" target="_blank" class="repo-link">Issues</a>
+      </div>
+    </div>
+    <div class="repo-card">
+      <h4><span class="dot" style="background:var(--amber);"></span> yiddish-mapping</h4>
+      <p>Audio-text matching tool. Single-file vanilla HTML/JS app deployed on Cloudflare Pages. Manages 4,669 audio files and 1,065 transcripts.</p>
+      <div class="repo-links">
+        <a href="https://github.com/Abe1018776/yiddish-mapping" target="_blank" class="repo-link">GitHub</a>
+      </div>
+    </div>
+    <div class="repo-card">
+      <h4><span class="dot" style="background:var(--pink);"></span> yiddish-audio-alignment</h4>
+      <p>Confusion-aware alignment system + transcript cleaner. Python/Flask backend with RunPod GPU inference and Cloudflare Pages frontend.</p>
+      <div class="repo-links">
+        <a href="https://github.com/Abe1018776/yiddish-audio-alignment" target="_blank" class="repo-link">GitHub</a>
+        <a href="https://github.com/Abe1018776/yiddish-audio-alignment/tree/feature/stable-ts-alignment" target="_blank" class="repo-link">Feature Branch</a>
+      </div>
+    </div>
+    <div class="repo-card">
+      <h4><span class="dot" style="background:var(--blue);"></span> yiddish-cleaner-docs</h4>
+      <p>Documentation hub. Architecture diagrams, integration plans, merge roadmap, and change summaries for the entire project.</p>
+      <div class="repo-links">
+        <a href="https://github.com/Abe1018776/yiddish-cleaner-docs" target="_blank" class="repo-link">GitHub</a>
+        <a href="https://abe1018776.github.io/yiddish-cleaner-docs/" target="_blank" class="repo-link">GitHub Pages</a>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<footer>
+  JEM Yiddish ASR Project Hub &bull; <a href="https://github.com/Abe1018776/jem-asr-hub">View on GitHub</a>
+</footer>
+
+</body>
+</html>
